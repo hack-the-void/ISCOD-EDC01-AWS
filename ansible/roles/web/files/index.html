@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>MediTrack Online | Maintenance connect&eacute;e pour les h&ocirc;pitaux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="MediTrack Online centralise le suivi du mat&eacute;riel m&eacute;dical, automatise la maintenance et garantit la conformit&eacute; RGPD/HDS." />
+  <style>
+    :root{
+      --midnight:#021123;
+      --deep:#032646;
+      --ocean:#09426d;
+      --teal:#0ed4d1;
+      --mint:#4ff3c3;
+      --aqua:#7cd5ff;
+      --bg:#dff3ff;
+      --text:#0f1f31;
+      --muted:#6a7c90;
+      --glass:rgba(255,255,255,.55);
+      --line:rgba(255,255,255,.4);
+      --shadow:0 25px 70px rgba(4,51,82,.18)
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Inter","Segoe UI",Roboto,Arial,sans-serif;
+      background:radial-gradient(circle at top,#f4fbff 0%,#dff3ff 45%,#cfe5ff 100%);
+      min-height:100vh;
+      color:var(--text);
+      line-height:1.6;
+      position:relative;
+      overflow-x:hidden
+    }
+    body::before,
+    body::after{
+      content:"";
+      position:absolute;
+      width:460px;
+      height:460px;
+      background:radial-gradient(circle,rgba(15,255,227,.45),transparent 70%);
+      filter:blur(40px);
+      z-index:-2;
+      opacity:.5
+    }
+    body::before{top:-120px;left:-80px}
+    body::after{bottom:-160px;right:-120px}
+    img{max-width:100%;display:block}
+    a{text-decoration:none;color:inherit}
+    .page{
+      max-width:1200px;
+      margin:0 auto;
+      padding:32px 24px 72px
+    }
+    nav.main-nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:nowrap;
+      gap:18px;
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,.35);
+      padding:16px 28px;
+      border-radius:999px;
+      box-shadow:var(--shadow);
+      position:sticky;
+      top:18px;
+      z-index:20;
+      backdrop-filter:blur(24px)
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px
+    }
+    .brand-mark{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      background:linear-gradient(140deg,var(--teal),var(--mint));
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      color:var(--midnight);
+      font-size:1.2rem;
+      box-shadow:0 12px 24px rgba(15,255,227,.35)
+    }
+    .brand div{font-weight:700;line-height:1.1}
+    .brand small{display:block;font-size:.75rem;color:var(--muted);font-weight:500}
+    .nav-links{
+      display:flex;
+      flex:1;
+      gap:8px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+      padding:2px 6px
+    }
+    .nav-links::-webkit-scrollbar{display:none}
+    .nav-links a{
+      padding:8px 18px;
+      border-radius:999px;
+      font-weight:500;
+      color:var(--muted);
+      border:1px solid transparent;
+      transition:.2s ease;
+      white-space:nowrap
+    }
+    .nav-links a:hover,
+    .nav-links a.active{
+      border-color:rgba(9,66,109,.2);
+      background:rgba(255,255,255,.85);
+      color:var(--ocean);
+      box-shadow:0 8px 18px rgba(9,66,109,.12)
+    }
+    .nav-cta{
+      background:linear-gradient(135deg,#041a3d,var(--deep));
+      color:#f7fbff;
+      border-radius:999px;
+      padding:13px 24px;
+      font-weight:600;
+      box-shadow:0 18px 35px rgba(2,17,35,.35)
+    }
+    header.hero{
+      margin-top:48px;
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+      gap:36px;
+      align-items:center
+    }
+    .eyebrow{
+      letter-spacing:.3em;
+      text-transform:uppercase;
+      font-size:.72rem;
+      color:var(--muted);
+      margin-bottom:12px
+    }
+    .hero h1{
+      font-size:clamp(2.2rem,4vw,3.2rem);
+      line-height:1.15;
+      font-weight:800;
+      color:var(--midnight);
+      margin-bottom:18px
+    }
+    .hero p{font-size:1.05rem;color:var(--text)}
+    .cta-group{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin:24px 0
+    }
+    .btn{
+      border-radius:999px;
+      padding:12px 22px;
+      font-weight:600;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      border:1px solid rgba(9,66,109,.14);
+      background:rgba(255,255,255,.8);
+      backdrop-filter:blur(16px);
+      color:var(--ocean);
+      transition:.25s ease
+    }
+    .btn.primary{
+      background:linear-gradient(130deg,var(--teal),var(--mint));
+      color:#031c29;
+      border:none;
+      box-shadow:0 18px 30px rgba(15,255,227,.28)
+    }
+    .btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(9,66,109,.18)}
+    .hero-visual{
+      position:relative;
+      background:linear-gradient(135deg,rgba(3,24,51,.92),rgba(10,69,112,.85));
+      border-radius:36px;
+      padding:34px;
+      color:#e8f5ff;
+      border:1px solid rgba(255,255,255,.25);
+      box-shadow:0 45px 90px rgba(2,17,35,.45);
+      overflow:hidden;
+      isolation:isolate;
+      backdrop-filter:blur(18px)
+    }
+    .hero-visual::before,
+    .hero-visual::after{
+      content:"";
+      position:absolute;
+      pointer-events:none;
+      border-radius:40px;
+      z-index:-1
+    }
+    .hero-visual::before{
+      inset:0;
+      background:radial-gradient(circle at 18% 20%,rgba(255,255,255,.35),transparent 60%);
+      opacity:.7
+    }
+    .hero-visual::after{
+      width:240px;
+      height:240px;
+      bottom:-40px;
+      right:-30px;
+      background:radial-gradient(circle,rgba(14,212,209,.55),transparent 70%);
+      filter:blur(8px)
+    }
+    .visual-top{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:20px
+    }
+    .visual-pill{
+      padding:7px 16px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.3);
+      font-size:.82rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#bfe8ff;
+      background:rgba(255,255,255,.04)
+    }
+    .visual-pill.is-active{
+      background:linear-gradient(120deg,var(--teal),var(--mint));
+      color:#021d2e;
+      border:none;
+      box-shadow:0 12px 26px rgba(15,255,227,.35)
+    }
+    .visual-led{
+      margin-left:auto;
+      font-size:.85rem;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      color:#9fe1ff;
+      opacity:.9
+    }
+    .visual-led span{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--mint);
+      box-shadow:0 0 12px var(--mint);
+      animation:pulse 1.4s ease infinite
+    }
+    @keyframes pulse{
+      0%{transform:scale(1);opacity:1}
+      50%{transform:scale(1.8);opacity:.4}
+      100%{transform:scale(1);opacity:1}
+    }
+    .visual-gauge{
+      background:rgba(1,18,40,.5);
+      border-radius:26px;
+      padding:20px 22px;
+      border:1px solid rgba(255,255,255,.08);
+      margin-bottom:20px;
+      box-shadow:inset 0 0 25px rgba(0,0,0,.25)
+    }
+    .visual-gauge-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px
+    }
+    .visual-gauge-value{
+      font-size:2.5rem;
+      font-weight:700;
+      color:var(--mint)
+    }
+    .visual-gauge-bar{
+      height:6px;
+      border-radius:999px;
+      background:rgba(255,255,255,.15);
+      overflow:hidden
+    }
+    .visual-gauge-bar span{
+      display:block;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--teal),var(--mint));
+      box-shadow:0 10px 30px rgba(15,255,227,.45)
+    }
+    .visual-list{
+      list-style:none;
+      margin:0;
+      display:grid;
+      gap:14px;
+      padding:0
+    }
+    .visual-list li{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:center;
+      padding-bottom:12px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      color:#cfe4ff
+    }
+    .visual-list li:last-child{border-bottom:none;padding-bottom:0}
+    .visual-list .label{font-weight:600;color:#fff}
+    .visual-list small{display:block;font-size:.75rem;color:rgba(255,255,255,.6)}
+    .visual-list strong{font-size:1rem;color:#fff}
+    .visual-footer{
+      margin-top:22px;
+      display:flex;
+      justify-content:space-between;
+      font-size:.85rem;
+      color:#9acbf3
+    }
+    .hero-stats{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+      gap:16px;
+      margin-top:10px
+    }
+    .stat{
+      padding:20px;
+      border-radius:20px;
+      background:var(--glass);
+      border:1px solid var(--line);
+      backdrop-filter:blur(18px);
+      box-shadow:0 15px 32px rgba(4,51,82,.12)
+    }
+    .stat-value{
+      font-size:2rem;
+      font-weight:800;
+      color:var(--ocean)
+    }
+    .stat-label{color:var(--muted);font-size:.92rem}
+    main{margin-top:54px;display:flex;flex-direction:column;gap:34px}
+    section.panel{
+      padding:32px;
+      border-radius:32px;
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px)
+    }
+    .section-head{margin-bottom:22px}
+    .section-head h2{
+      font-size:1.9rem;
+      color:var(--ocean);
+      margin-bottom:6px
+    }
+    .section-head p{color:var(--muted)}
+    .service-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:18px
+    }
+    .service-card{
+      padding:22px;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.45);
+      background:rgba(255,255,255,.7);
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+      transition:.35s ease;
+      min-height:190px
+    }
+    .service-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at var(--x,50%) var(--y,50%),rgba(122,213,255,.35),transparent 55%);
+      opacity:.8;
+      transition:opacity .3s ease
+    }
+    .service-card:hover{transform:translateY(-6px)}
+    .service-card h3{font-size:1.15rem;margin-bottom:10px}
+    .service-card p{color:var(--muted);position:relative;z-index:1}
+    .arch-tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:18px
+    }
+    .arch-tabs button{
+      padding:9px 18px;
+      border-radius:999px;
+      border:1px solid rgba(9,66,109,.15);
+      background:rgba(255,255,255,.9);
+      font-weight:600;
+      color:var(--ocean);
+      cursor:pointer;
+      transition:.2s ease
+    }
+    .arch-tabs button.is-active{
+      background:linear-gradient(120deg,var(--teal),var(--mint));
+      color:#022231;
+      box-shadow:0 12px 24px rgba(15,255,227,.25)
+    }
+    .detail-card{
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.5);
+      background:rgba(4,26,61,.85);
+      color:#f1fbff;
+      padding:26px;
+      box-shadow:var(--shadow)
+    }
+    .detail-card ul{margin-top:12px;padding-left:18px;color:#d2e9ff}
+    .stack-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:16px;
+      margin-top:18px
+    }
+    .stack-card{
+      padding:18px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.4);
+      background:rgba(255,255,255,.8)
+    }
+    .timeline{
+      list-style:none;
+      display:grid;
+      gap:16px
+    }
+    .timeline li{
+      display:grid;
+      grid-template-columns:70px minmax(0,1fr);
+      gap:16px;
+      align-items:flex-start
+    }
+    .badge{
+      width:70px;
+      height:70px;
+      border-radius:18px;
+      background:linear-gradient(135deg,var(--teal),var(--mint));
+      display:grid;
+      place-items:center;
+      font-weight:700;
+      color:#032640;
+      box-shadow:0 18px 32px rgba(15,255,227,.35)
+    }
+    .testimonials{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:16px
+    }
+    .testimonial{
+      padding:24px;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.4);
+      background:rgba(255,255,255,.75);
+      box-shadow:0 10px 25px rgba(3,38,70,.12);
+      min-height:220px;
+      opacity:.4;
+      transform:scale(.95);
+      transition:.4s ease
+    }
+    .testimonial.is-active{opacity:1;transform:scale(1)}
+    .testimonial cite{display:block;margin-top:16px;font-style:normal;font-weight:600;color:var(--ocean)}
+    .contact-card{
+      padding:28px;
+      border-radius:30px;
+      background:linear-gradient(140deg,#041d3f,#07335c);
+      color:#e5f6ff;
+      border:1px solid rgba(255,255,255,.2);
+      box-shadow:var(--shadow);
+      display:grid;
+      gap:18px
+    }
+    .contact-card a{color:#7cd5ff;font-weight:600}
+    footer{
+      text-align:center;
+      margin-top:48px;
+      color:var(--muted);
+      font-size:.9rem
+    }
+    :focus-visible{outline:3px solid var(--aqua);outline-offset:4px}
+    @media(max-width:960px){
+      nav.main-nav{border-radius:40px;gap:14px}
+      header.hero{grid-template-columns:1fr}
+      .hero-visual{order:-1}
+    }
+    @media(max-width:600px){
+      .page{padding:28px 16px 60px}
+      section.panel{padding:26px;border-radius:26px}
+      nav.main-nav{padding:14px 18px;flex-direction:column;align-items:stretch}
+      .nav-links{justify-content:flex-start}
+      .nav-cta{align-self:flex-end}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="main-nav">
+      <div class="brand">
+        <div class="brand-mark">M</div>
+        <div>
+          MediTrack Online
+          <small>Suivi intelligent des actifs m&eacute;dicaux</small>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="#top">Aper&ccedil;u</a>
+        <a href="#services">Solutions</a>
+        <a href="#plateforme">Plateforme</a>
+        <a href="#automatisation">Automatisation</a>
+        <a href="#temoignages">T&eacute;moignages</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+
+    <header class="hero" id="top">
+      <div>
+        <p class="eyebrow">Nouvelle g&eacute;n&eacute;ration</p>
+        <h1>La plateforme qui garde chaque &eacute;quipement clinique sous contr&ocirc;le.</h1>
+        <p>
+          MediTrack Online centralise l&apos;&eacute;tat de vos respirateurs, scanners, pompes et blocs.
+          Tableaux de bord temps r&eacute;el, maintenance automatis&eacute;e et conformit&eacute; RGPD/HDS
+          dans une interface unique, avec alertes proactives, support biom&eacute;dical 24/7 et synchronisation multi-sites.
+        </p>
+        <div class="cta-group">
+          <a class="btn primary" href="#plateforme">Explorer la plateforme</a>
+          <a class="btn" href="#services">Voir nos offres</a>
+        </div>
+        <div class="hero-stats">
+          <article class="stat">
+            <span class="stat-value" data-target="3200" data-suffix="+">0</span>
+            <span class="stat-label">&eacute;quipements supervis&eacute;s</span>
+          </article>
+          <article class="stat">
+            <span class="stat-value" data-target="98" data-suffix="%">0%</span>
+            <span class="stat-label">incidents r&eacute;solus &lt; 24h</span>
+          </article>
+          <article class="stat">
+            <span class="stat-value" data-target="4" data-suffix=" hubs">0</span>
+            <span class="stat-label">centres op&eacute;rationnels UE</span>
+          </article>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="visual-top">
+          <span class="visual-pill is-active">Live board</span>
+          <span class="visual-pill">Europe</span>
+          <span class="visual-led"><span></span>Temps r&eacute;el</span>
+        </div>
+        <div class="visual-gauge">
+          <div class="visual-gauge-head">
+            <div>
+              <small style="letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.6)">Disponibilit&eacute;</small>
+              <div class="visual-gauge-value">98%</div>
+            </div>
+            <div style="text-align:right">
+              <small style="color:rgba(255,255,255,.6)">Progression hebdo</small>
+              <strong style="display:block;color:#9fe1ff">+4 pts</strong>
+            </div>
+          </div>
+          <div class="visual-gauge-bar"><span style="width:98%"></span></div>
+        </div>
+        <ul class="visual-list">
+          <li>
+            <div>
+              <span class="label">Respirateurs</span>
+              <small>12 sites actifs</small>
+            </div>
+            <strong>98% OK</strong>
+          </li>
+          <li>
+            <div>
+              <span class="label">IRM &amp; scanners</span>
+              <small>Pr&eacute;ventif en cours</small>
+            </div>
+            <strong>12 interventions</strong>
+          </li>
+          <li>
+            <div>
+              <span class="label">Bloc ORL</span>
+              <small>Mise &agrave; jour capteurs</small>
+            </div>
+            <strong>Alerte calibrage</strong>
+          </li>
+          <li>
+            <div>
+              <span class="label">Pompes perfusion</span>
+              <small>Planning automat&eacute;</small>
+            </div>
+            <strong>Maintenance J+7</strong>
+          </li>
+        </ul>
+        <div class="visual-footer">
+          <span>Plateforme h&eacute;berg&eacute;e en Europe</span>
+          <span>Latence <strong>&lt;120&nbsp;ms</strong></span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="services" class="panel">
+        <div class="section-head">
+          <h2>Des services pens&eacute;s pour les directions biom&eacute;dicales</h2>
+          <p>Un seul portail pour surveiller, anticiper et automatiser vos interventions.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service-card tilt" data-tilt>
+            <h3>Surveillance continue</h3>
+            <p>Dashboards consolid&eacute;s, alertes en push, remont&eacute;es IoT sur vos actifs critiques.</p>
+          </article>
+          <article class="service-card tilt" data-tilt>
+            <h3>Maintenance orchestr&eacute;e</h3>
+            <p>Plans d&apos;actions g&eacute;n&eacute;r&eacute;s automatiquement, tickets assign&eacute;s aux &eacute;quipes internes ou partenaires.</p>
+          </article>
+          <article class="service-card tilt" data-tilt>
+            <h3>Conformit&eacute; garantie</h3>
+            <p>Tra&ccedil;abilit&eacute; RGPD/HDS, politiques IAM et chiffrage syst&eacute;matique des donn&eacute;es techniques.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="plateforme" class="panel">
+        <div class="section-head">
+          <h2>Plateforme digitale MediTrack</h2>
+          <p>Un environnement cloud souverain op&eacute;r&eacute; par nos &eacute;quipes, disponible sur web et mobile.</p>
+        </div>
+        <div class="arch-tabs">
+          <button type="button" class="is-active" data-feature="parcours">Flux patient</button>
+          <button type="button" data-feature="observabilite">Observabilit&eacute;</button>
+          <button type="button" data-feature="infrastructure">Op&eacute;rations terrain</button>
+          <button type="button" data-feature="securite">S&eacute;curit&eacute;</button>
+        </div>
+        <div class="detail-card">
+          <h3 data-feature-title></h3>
+          <p data-feature-body></p>
+          <ul data-feature-list></ul>
+        </div>
+        <div class="stack-grid">
+          <article class="stack-card">
+            <strong>Apps web &amp; mobiles</strong>
+            <p>Interfaces responsives, zones patient/tech, formulaires rapides.</p>
+          </article>
+          <article class="stack-card">
+            <strong>Connecteurs</strong>
+            <p>API FHIR, int&eacute;gration CMMS, synchronisation vers SIH/SAP.</p>
+          </article>
+          <article class="stack-card">
+            <strong>Data hub</strong>
+            <p>Historique multi-sites, export CSV/Excel, analyses Power BI.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="automatisation" class="panel">
+        <div class="section-head">
+          <h2>Accompagnement continu MediTrack</h2>
+          <p>Un parcours en 4 phases pour d&eacute;ployer, adopter et faire vivre votre maintenance connect&eacute;e.</p>
+        </div>
+        <ol class="timeline">
+          <li>
+            <div class="badge">01</div>
+            <div>
+              <h3>Diagnostic terrain</h3>
+              <p>Inventaire des &eacute;quipements, analyse des pannes r&eacute;currentes, d&eacute;finition des KPI et plans de maintenance.</p>
+            </div>
+          </li>
+          <li>
+            <div class="badge">02</div>
+            <div>
+              <h3>Onboarding &eacute;quipes</h3>
+              <p>Formation biom&eacute;dicale, param&eacute;trage des workflows, connexion de vos fournisseurs et import historique.</p>
+            </div>
+          </li>
+          <li>
+            <div class="badge">03</div>
+            <div>
+              <h3>Pilotage quotidien</h3>
+              <p>Alertes proactives, tickets automatis&eacute;s, indicateurs de disponibilit&eacute; et hotline d&apos;assistance 24/7.</p>
+            </div>
+          </li>
+          <li>
+            <div class="badge">04</div>
+            <div>
+              <h3>Am&eacute;lioration continue</h3>
+              <p>Ateliers trimestriels, suggestions d&apos;optimisation, benchmark inter-sites et feuille de route fonctionnelle.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="temoignages" class="panel">
+        <div class="section-head">
+          <h2>Ils utilisent MediTrack Online</h2>
+          <p>Des CHU et cliniques europ&eacute;ennes qui gagnent en disponibilit&eacute;.</p>
+        </div>
+        <div class="testimonials" data-slider>
+          <article class="testimonial is-active">
+            <p>&laquo; Nous avons diminu&eacute; de 42% les interventions d&apos;urgence gr&acirc;ce aux alertes proactives. &raquo;</p>
+            <cite>Claire V. &mdash; CHU Lyon</cite>
+          </article>
+          <article class="testimonial">
+            <p>&laquo; La tra&ccedil;abilit&eacute; RGPD et l&apos;int&eacute;gration avec notre GMAO ont simplifi&eacute; les audits HDS. &raquo;</p>
+            <cite>Omar K. &mdash; R&eacute;seau Sant&eacute; Europe</cite>
+          </article>
+          <article class="testimonial">
+            <p>&laquo; L&apos;&eacute;quipe MediTrack a connect&eacute; nos 5 cliniques en moins de deux semaines par site, sans interruption de soins. &raquo;</p>
+            <cite>Fanny G. &mdash; Cliniques Atlantiques</cite>
+          </article>
+        </div>
+      </section>
+
+      <section id="contact" class="panel">
+        <div class="contact-card">
+          <div>
+            <h2>Pr&ecirc;t pour une d&eacute;mo personnalis&eacute;e&nbsp;?</h2>
+            <p>Nous configurons un espace de test d&eacute;di&eacute; &agrave; votre h&ocirc;pital avec vos processus et vos &eacute;quipements.</p>
+          </div>
+          <div>
+            <strong>Julien Perrot</strong><br />
+            MediTrack Online &mdash; GreenOps Solutions<br />
+            <a href="mailto:contact@meditrack.eu">contact@meditrack.eu</a> &middot;
+            <a href="tel:+33184000000">+33 1 84 00 00 00</a>
+          </div>
+          <a class="btn primary" href="mailto:contact@meditrack.eu?subject=Demande%20de%20demo%20MediTrack">R&eacute;server une session</a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      &copy; <span id="year"></span> MediTrack Online &middot; Con&ccedil;u pour la maintenance connect&eacute;e.
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const navLinks=[...document.querySelectorAll('.nav-links a')];
+      const sections=[...document.querySelectorAll('section[id], header[id]')];
+      const sectionObserver=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            navLinks.forEach(link=>{
+              const target=link.getAttribute('href').replace('#','');
+              if(target===entry.target.id){link.classList.add('active');}
+              else{link.classList.remove('active');}
+            });
+          }
+        });
+      },{threshold:.35});
+      sections.forEach(section=>sectionObserver.observe(section));
+
+      const stats=document.querySelectorAll('.stat-value');
+      const statObserver=new IntersectionObserver((entries,obs)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            animate(entry.target);
+            obs.unobserve(entry.target);
+          }
+        });
+      },{threshold:.7});
+      const animate=(el)=>{
+        if(el.dataset.done)return;
+        el.dataset.done="true";
+        const target=parseFloat(el.dataset.target||"0");
+        const suffix=el.dataset.suffix||"";
+        const duration=1400;
+        const decimals=target%1!==0?1:0;
+        let start=null;
+        function step(timestamp){
+          if(!start)start=timestamp;
+          const progress=Math.min((timestamp-start)/duration,1);
+          const value=(target*progress).toFixed(decimals);
+          el.textContent=value.replace(/\.0$/,"")+suffix;
+          if(progress<1){requestAnimationFrame(step);}
+        }
+        requestAnimationFrame(step);
+      };
+      stats.forEach(stat=>statObserver.observe(stat));
+
+      const featureTitle=document.querySelector('[data-feature-title]');
+      const featureBody=document.querySelector('[data-feature-body]');
+      const featureList=document.querySelector('[data-feature-list]');
+      const featureButtons=document.querySelectorAll('[data-feature]');
+      const featureCopy={
+        parcours:{
+          title:"Flux patient fluidifi&eacute;",
+          body:"Visualisez les disponibilit&eacute;s, les maintenances planifi&eacute;es et les temps d&apos;attente par service.",
+          list:[
+            "Vue unifi&eacute;e bloc, imagerie, ambulatoire.",
+            "Capteurs IoT remontant l&apos;&eacute;tat des actifs.",
+            "Historique complet partageable aux cliniciens."
+          ]
+        },
+        observabilite:{
+          title:"Observabilit&eacute; centralis&eacute;e",
+          body:"KPI en direct, alertes vers Teams/Slack et rapports automatiques.",
+          list:[
+            "Suivi SLA, r&eacute;f&eacute;rences fabricant et criticit&eacute;.",
+            "Rapports hebdo exportables (PDF/CSV).",
+            "Score de sant&eacute; par h&ocirc;pital et par marque."
+          ]
+        },
+        infrastructure:{
+          title:"Op&eacute;rations terrain orchestr&eacute;es",
+          body:"Planifiez vos tourn&eacute;es, synchronisez les prestataires et partagez les comptes-rendus.",
+          list:[
+            "Workflows personnalisables (urgence, pr&eacute;ventif).",
+            "Assignation automatique aux techniciens disponibles.",
+            "Suivi des pi&egrave;ces et des stocks en temps r&eacute;el."
+          ]
+        },
+        securite:{
+          title:"S&eacute;curit&eacute; et conformit&eacute;",
+          body:"Acc&egrave;s chiffr&eacute;s, journaux horodat&eacute;s et politique RGPD/HDS native.",
+          list:[
+            "Audit de toutes les interventions.",
+            "Segmentation des droits par r&ocirc;le et site.",
+            "Sauvegardes r&eacute;guli&egrave;res dans des centres europ&eacute;ens."
+          ]
+        }
+      };
+      function updateFeature(key){
+        const copy=featureCopy[key];
+        if(!copy)return;
+        featureTitle.innerHTML=copy.title;
+        featureBody.innerHTML=copy.body;
+        featureList.innerHTML=copy.list.map(line=>"<li>"+line+"</li>").join("");
+      }
+      featureButtons.forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          featureButtons.forEach(b=>b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          updateFeature(btn.dataset.feature);
+        });
+      });
+      updateFeature('parcours');
+
+      const serviceCards=document.querySelectorAll('.service-card');
+      serviceCards.forEach(card=>{
+        card.addEventListener('pointermove',evt=>{
+          const rect=card.getBoundingClientRect();
+          const x=((evt.clientX-rect.left)/rect.width)*100;
+          const y=((evt.clientY-rect.top)/rect.height)*100;
+          card.style.setProperty('--x',x+"%");
+          card.style.setProperty('--y',y+"%");
+        });
+      });
+
+      const tiltCards=document.querySelectorAll('[data-tilt]');
+      tiltCards.forEach(card=>{
+        card.addEventListener('pointermove',evt=>{
+          const rect=card.getBoundingClientRect();
+          const x=((evt.clientX-rect.left)/rect.width-.5)*10;
+          const y=((evt.clientY-rect.top)/rect.height-.5)*10;
+          card.style.transform=`rotateX(${-y}deg) rotateY(${x}deg) translateY(-6px)`;
+        });
+        card.addEventListener('pointerleave',()=>{
+          card.style.transform="";
+        });
+      });
+
+      const slider=document.querySelector('[data-slider]');
+      if(slider){
+        const slides=[...slider.querySelectorAll('.testimonial')];
+        let index=0;
+        setInterval(()=>{
+          slides[index].classList.remove('is-active');
+          index=(index+1)%slides.length;
+          slides[index].classList.add('is-active');
+        },3800);
+      }
+
+      const year=document.getElementById('year');
+      if(year){year.textContent=new Date().getFullYear();}
+    })();
+  </script>
+</body>
+</html>

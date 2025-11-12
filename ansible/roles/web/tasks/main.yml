@@ -1,0 +1,60 @@
+- name: Mettre a jour la liste des paquets
+  apt:
+    update_cache: yes
+  tags: update
+
+- name: Installer Nginx
+  apt:
+    name: nginx
+    state: present
+  tags: install
+
+- name: Démarrer et activer Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  tags: service
+
+- name: Copier la page d'accueil
+  copy:
+    src: index.html
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  tags: web
+
+- name: Copier la page d'erreur
+  copy:
+    src: error.html
+    dest: /var/www/html/error.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  tags: web
+
+- name: Supprimer la page par défaut de Nginx
+  file:
+    path: /var/www/html/index.nginx-debian.html
+    state: absent
+  ignore_errors: yes
+  tags: cleanup
+
+- name: Installer AWS CLI
+  apt:
+    name: awscli
+    state: present
+    update_cache: yes
+  tags: awscli
+
+- name: Synchroniser les site vers le bucket S3
+  command: >
+    aws s3 sync /var/www/html s3://{{ s3_bucket_name }}
+    --delete
+    --region {{ aws_region }}
+  tags: s3
+
+- name: Afficher un message de confirmation
+  debug:
+    msg: "Déploiement MediTrack terminé avec succès ! Site accessible sur http://{{ ansible_host }}/"

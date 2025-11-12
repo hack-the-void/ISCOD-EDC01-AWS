@@ -1,0 +1,10 @@
+- name: Configuration du serveur web MediTrack
+  hosts: web
+  become: yes
+
+  vars:
+    s3_bucket_name: "meditrack-site-1f6ea17b"
+    aws_region: "eu-west-3"
+  
+  roles:
+    - web
